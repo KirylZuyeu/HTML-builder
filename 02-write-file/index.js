@@ -42,7 +42,7 @@ function write(filePath) {
     let sentence;
     switch (line.trim()) {
     case 'exit':
-    case 'SIGINT':
+    // case 'SIGINT':
       read(filePath);
       rl.close();
       break;
@@ -64,12 +64,6 @@ function write(filePath) {
 
 write(pathForFile);
 
-// process.stdin.resume();
-
-// function handle() {
-//   console.log('Процесс записи завершен, текст в файле следующий:');
-// }
-
 // .on('SIGINT', () => {
 //   writableStream.end();
 //   writableStream.on('finish', () => {
@@ -77,32 +71,3 @@ write(pathForFile);
 //     process.exit(0);
 //   });
 // })
-
-// process.on('SIGINT', () => {
-//   handle();
-//   read(pathForFile);
-//   process.abort();
-// });
-
-// process.question('Are you sure you want to exit? ', (answer) => {
-//   if (answer.match(/^y(es)?$/i)) rl.pause();
-// });
-
-// const readline = require('readline').createInterface({
-//     input: process.stdin,
-//     output: process.stdout,
-//   });
-  
-// readline.question(`Введите текст, который будет сохранен в файл:`, data => {
-//     write(pathForFile, data);
-//     readline.close();
-// });
-
-
-// function signalHandler() {
-//     process.exit();
-// }
-
-// process.on('SIGINT', signalHandler);
-// process.on('exit', signalHandler);
-  
