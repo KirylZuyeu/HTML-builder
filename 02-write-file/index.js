@@ -1,13 +1,108 @@
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
+
+const process = require('process');
 
 const pathForFile = path.join(__dirname, '/text.txt');
 
+console.log('Справка: Для прекращения нажмите комбинацию клавиш Ctrl+C или введите строку exit.');
+console.log('Справка: Для сохранения текста в файл, нажмите Enter.');
 
-const content = 'Some content!';
+function read(filePath) {
+  const readableStream = fs.createReadStream(filePath, 'utf8');
+  readableStream.on('error', function (error) {
+    console.log(`error: ${error.message}`);
+  });
+  readableStream.on('data', (chunk) => {
+    console.log(chunk);
+  });
+}
 
-fs.appendFile(pathForFile, content, err => {
-  if (err) {
-    console.error(err);
-  }
-});
+function write(filePath) {
+  const writableStream = fs.createWriteStream(filePath, { flags: 'a',
+    encoding: null,
+    // eslint-disable-next-line no-octal
+    mode: 0666 
+  });
+
+  writableStream.on('error',  (error) => {
+    console.log(`\nAn error occured while writing to the file. Error: ${error.message}`);
+  });
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    prompt: 'Введите текст: '
+  });
+
+  rl.prompt();
+    
+  rl.on('line', (line) => {
+    let sentence;
+    switch (line.trim()) {
+    case 'exit':
+    case 'SIGINT':
+      read(filePath);
+      rl.close();
+      break;
+    default:
+      sentence = line + '\n';
+      writableStream.write(sentence);
+      rl.prompt();
+      break;
+    }
+  }).on('close', () => {
+    writableStream.end();
+    writableStream.on('finish', () => {
+      console.log(`\nВсе внесенные строки были успешно сохранены в следующий файл ${filePath}`);
+      process.exit(0);
+    });
+  });
+
+}
+
+write(pathForFile);
+
+// process.stdin.resume();
+
+// function handle() {
+//   console.log('Процесс записи завершен, текст в файле следующий:');
+// }
+
+// .on('SIGINT', () => {
+//   writableStream.end();
+//   writableStream.on('finish', () => {
+//     console.log(`\nAll your sentences have been written to ${filePath}`);
+//     process.exit(0);
+//   });
+// })
+
+// process.on('SIGINT', () => {
+//   handle();
+//   read(pathForFile);
+//   process.abort();
+// });
+
+// process.question('Are you sure you want to exit? ', (answer) => {
+//   if (answer.match(/^y(es)?$/i)) rl.pause();
+// });
+
+// const readline = require('readline').createInterface({
+//     input: process.stdin,
+//     output: process.stdout,
+//   });
+  
+// readline.question(`Введите текст, который будет сохранен в файл:`, data => {
+//     write(pathForFile, data);
+//     readline.close();
+// });
+
+
+// function signalHandler() {
+//     process.exit();
+// }
+
+// process.on('SIGINT', signalHandler);
+// process.on('exit', signalHandler);
+  
