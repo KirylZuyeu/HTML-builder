@@ -6,12 +6,12 @@ const srcFolder = path.join(__dirname, '\\files');
 const dirFolder = path.join(__dirname, '\\files-copy');
 
 fs.rm(dirFolder, { recursive: true }, () => {
-  copyDir(srcFolder, dirFolder).then();
+  copyDir(srcFolder, dirFolder);
 });
 
 async function copyDir(src, dest) {
-  var stats = await stat(src);
-  var isDirectory = stats.isDirectory();
+  const stats = await stat(src);
+  const isDirectory = stats.isDirectory();
   if (isDirectory) {
     await mkdir(dest, { recursive: true });
     (await readdir(src)).forEach(function(childItemName) {
