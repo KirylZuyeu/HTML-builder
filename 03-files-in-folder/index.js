@@ -17,7 +17,7 @@ fs.readdir(pathForFile,
           if (err) {
             console.log('File doesn\'t exist.');
           } else {
-            let size = Math.ceil(stats.size * 0.0009765625);
+            let size = stats.size * 0.0009765625;
             console.log(`${name} - ${extname.slice(1)} - ${size}kb`);}
         });
       });
