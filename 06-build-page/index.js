@@ -6,7 +6,6 @@ const fs = require('fs');
 const bundlePath = join(__dirname, 'project-dist');
 const mainAssetsPath = join(__dirname, 'assets');
 const copyAssetsPath = join(bundlePath, 'assets');
-
 const srcCssPath = join(__dirname, 'styles');
 
 async function mergeStyles(src, bundle) {
@@ -38,27 +37,24 @@ async function replaceHtmlTemplates() {
   const link = join(__dirname, 'template.html');
   const readable = createReadStream(link, 'utf-8');
   const writable = createWriteStream(join(bundlePath, 'index.html'));
-  let html = '';
+  let htmlTemplate = '';
 
   readable.on('data', async (chunk) => {
-    html = chunk;
-    const files = await readdir(join(__dirname, 'components'), {
+    htmlTemplate = chunk;
+    const htmlFiles = await readdir(join(__dirname, 'components'), {
       withFileTypes: true,
     });
-    const htmlFiles = files.filter((file) => extname(file.name) === '.html');
-    htmlFiles.forEach((file, i) => {
-      if (file.isFile()) {
-        const readableFile = createReadStream(
-          join(__dirname, 'components', file.name)
-        );
-        const reg = `{{${parse(file.name).name}}}`;
-        readableFile.on('data', (chunk) => {
-          html = html.replace(reg, chunk);
-          if (i === htmlFiles.length - 1) {
-            writable.write(html);
-          }
-        });
-      }
+    htmlFiles.forEach((file, index) => {
+      const readableFile = createReadStream(
+        join(__dirname, 'components', file.name)
+      );
+      const reg = `{{${parse(file.name).name}}}`;
+      readableFile.on('data', (chunk) => {
+        htmlTemplate = htmlTemplate.replace(reg, chunk);
+        if (index === htmlFiles.length - 1) {
+          writable.write(htmlTemplate);
+        }
+      });
     });
   });
 }
