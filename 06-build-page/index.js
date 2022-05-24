@@ -34,12 +34,12 @@ async function copyDir(src, dest) {
 }
 
 async function replaceHtmlTemplates() {
-  const link = join(__dirname, 'template.html');
-  const readable = createReadStream(link, 'utf-8');
-  const writable = createWriteStream(join(bundlePath, 'index.html'));
+  const srcHtmlPath = join(__dirname, 'template.html');
+  const readableStream = createReadStream(srcHtmlPath, 'utf-8');
+  const writableStream = createWriteStream(join(bundlePath, 'index.html'));
   let htmlTemplate = '';
 
-  readable.on('data', async (chunk) => {
+  readableStream.on('data', async (chunk) => {
     htmlTemplate = chunk;
     const htmlFiles = await readdir(join(__dirname, 'components'), {
       withFileTypes: true,
@@ -52,7 +52,7 @@ async function replaceHtmlTemplates() {
       readableFile.on('data', (chunk) => {
         htmlTemplate = htmlTemplate.replace(reg, chunk);
         if (index === htmlFiles.length - 1) {
-          writable.write(htmlTemplate);
+          writableStream.write(htmlTemplate);
         }
       });
     });
