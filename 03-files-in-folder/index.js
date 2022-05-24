@@ -1,7 +1,7 @@
 const fs = require('fs');
-const path = require('path');
+const { join, extname } = require('path');
 
-const pathForFile = path.join(__dirname, '/secret-folder');
+const pathForFile = join(__dirname, 'secret-folder');
 
 fs.readdir(pathForFile, 
   { withFileTypes: true },
@@ -11,14 +11,14 @@ fs.readdir(pathForFile,
       console.log(err);
     else {
       files.filter((dirent) => dirent.isFile()).forEach(file => {
-        let extname = path.extname(file.name);
-        let name = (file.name).replace (new RegExp (extname, 'g'), '');
+        let extName = extname(file.name);
+        let name = (file.name).replace (new RegExp (extName, 'g'), '');
         fs.stat(`${pathForFile}\\${file.name}`, (err, stats) => {
           if (err) {
             console.log('File doesn\'t exist.');
           } else {
             let size = stats.size * 0.0009765625;
-            console.log(`${name} - ${extname.slice(1)} - ${size}kb`);}
+            console.log(`${name} - ${extName.slice(1)} - ${size}kb`);}
         });
       });
     }
