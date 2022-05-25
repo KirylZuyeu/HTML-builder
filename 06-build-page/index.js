@@ -1,5 +1,5 @@
 const { createWriteStream, createReadStream } = require('fs');
-const { join, extname, parse } = require('path');
+const { join, extname } = require('path');
 const { readdir, mkdir, copyFile, stat } = require('fs/promises');
 const fs = require('fs');
 
@@ -37,22 +37,19 @@ async function replaceHtmlTemplates() {
   const srcHtmlPath = join(__dirname, 'template.html');
   const readableStream = createReadStream(srcHtmlPath, 'utf-8');
   const writableStream = createWriteStream(join(bundlePath, 'index.html'));
-  let htmlTemplate = '';
 
   readableStream.on('data', async (chunk) => {
-    htmlTemplate = chunk;
     const htmlFiles = await readdir(join(__dirname, 'components'), {
       withFileTypes: true,
     });
+    console.log(htmlFiles);
     htmlFiles.forEach((file, index) => {
-      const readableFile = createReadStream(
-        join(__dirname, 'components', file.name)
-      );
-      const reg = `{{${parse(file.name).name}}}`;
-      readableFile.on('data', (chunk) => {
-        htmlTemplate = htmlTemplate.replace(reg, chunk);
+      const readableFile = createReadStream(join(__dirname, 'components', file.name));
+      const reg = `{{${file.name.split('.')[0]}}}`;
+      readableFile.on('data', (chunkComp) => {
+        chunk = chunk.replace(reg, chunkComp);
         if (index === htmlFiles.length - 1) {
-          writableStream.write(htmlTemplate);
+          writableStream.write(chunk);
         }
       });
     });
