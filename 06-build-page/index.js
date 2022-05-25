@@ -42,7 +42,6 @@ async function replaceHtmlTemplates() {
     const htmlFiles = await readdir(join(__dirname, 'components'), {
       withFileTypes: true,
     });
-    console.log(htmlFiles);
     htmlFiles.forEach((file, index) => {
       const readableFile = createReadStream(join(__dirname, 'components', file.name));
       const reg = `{{${file.name.split('.')[0]}}}`;
