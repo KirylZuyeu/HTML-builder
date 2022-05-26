@@ -12,8 +12,9 @@ fs.readdir(pathForFile,
     else {
       files.filter((dirent) => dirent.isFile()).forEach(file => {
         let extName = extname(file.name);
-        let name = (file.name).replace (new RegExp (extName, 'g'), '');
-        fs.stat(`${pathForFile}\\${file.name}`, (err, stats) => {
+        let name = (file.name).replace(new RegExp (extName, 'g'), '');
+        let filePath = join(pathForFile, file.name);
+        fs.stat(filePath, (err, stats) => {
           if (err) {
             console.log('File doesn\'t exist.');
           } else {
